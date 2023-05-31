@@ -1,0 +1,49 @@
+package main
+
+import (
+	"errors"
+	"log"
+	"time"
+)
+
+type Estudiantes struct {
+	ID        int
+	Name      string
+	Age       int16
+	Active    bool
+	CreatedAt time.Time
+	UpdateAp  time.Time
+}
+
+// crear registro de un studiante
+func Crear(e Estudiantes) error {
+	//creamos el string para poder insertar en la base de datos
+	q := `INSERT INTO 
+			estudiantes (name, age, active)
+			VALUES ($1, $2, $3)`
+	db := GetConnection() //traemos la conexion a la base de datos
+
+	defer db.Close() //buena practica es: siempre cerrar la conexión a la base de datos
+
+	//creamos la sentencia preparada para que no se pueda realizar la inyecion sql
+
+	stmt, err := db.Prepare(q) //preparamos la sentencia "statement"
+
+	if err != nil {
+		log.Fatalf("Error al preparala la sentencia => %s ", err)
+		return err
+	}
+
+	defer stmt.Close()
+	//obtenemos la cantidad de filas que fueron afectadas
+	r, err := stmt.Exec(e.Name, e.Age, e.Active)
+	// el exec se usa para las instrucciones de delete, insert, update, siempre se poner las columnas que se quiere afectar
+
+	i, _ := r.RowsAffected()
+
+	if i != 1 {
+		return errors.New("Error: Se esperaba 1 fila afectada")
+	}
+
+	return nil
+}

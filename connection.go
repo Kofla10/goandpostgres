@@ -10,10 +10,10 @@ import (
 )
 
 // getConnection obtiene una conexión a la base de datos
-func getConnection() *sql.DB {
+func GetConnection() *sql.DB {
 	//creamos la cadena de la conexión
 	// dsn := "postgres://'db user':'pss user'@'direction service':'port'?'sslmode'='enabel or disable'" el sslmode quiere decir para realizar la conexión segura a la base de datos
-	dsn := "postgres://golang:golang@120.0.0.1:5432/gocrud?sslmode=disable"
+	dsn := "postgres://postgres:@127.0.0.1:5432/estudiantes?sslmode=disable"
 	db, err := sql.Open("postgres", dsn) //abrimos una conexion a la base de datos, la funcion open nos devuelve un error y una conexion a la basede datos
 
 	if err != nil {
